@@ -371,3 +371,72 @@
 .comment-author-link:hover {
   color: #ff7aa2 !important;
 }
+.post-card {
+  overflow: hidden;
+}
+
+.post-author-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.post-author-avatar,
+.post-author-fallback {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-author-fallback {
+  background: linear-gradient(135deg, #ff2d73, #ff4f86);
+  color: #fff;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.post-author-info {
+  min-width: 0;
+}
+
+.post-author-name {
+  font-weight: 800;
+  color: #fff;
+}
+
+.post-author-date {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+.post-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.post-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.post-content {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}

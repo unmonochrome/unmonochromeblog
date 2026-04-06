@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="https://use.typekit.net/xvn1qry.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="style.css?v=300">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
   <title>Login - UNMONOCHROME</title>
 </head>
 
@@ -23,7 +26,7 @@
 
       <h1>LOGIN</h1>
 
-      <form action="../backend.php/login.php" method="POST" style="width:100%;">
+      <form action="../backend/login.php" method="POST" style="width:100%;">
         <div class="textfield">
           <label for="usuario">Usuário</label>
           <div class="input-wrapper">

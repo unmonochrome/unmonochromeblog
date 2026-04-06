@@ -1,6 +1,6 @@
 <?php
-require_once "../backend.php/verificar_login.php";
-require_once "../backend.php/conexao.php";
+require_once "../backend/verificar_login.php";
+require_once "../backend/conexao.php";
 
 $usuario_logado_id = $_SESSION["usuario_id"];
 $usuario_id = isset($_GET["id"]) ? intval($_GET["id"]) : $usuario_logado_id;
@@ -73,6 +73,9 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
   <title>Perfil - UNMONOCHROME</title>
   <link rel="stylesheet" href="https://use.typekit.net/xvn1qry.css">
   <link rel="stylesheet" href="site.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
 
   <style>
     .perfil-container {
@@ -444,9 +447,18 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
     <img src="img/logo-novo.png" alt="UNMONOCHROME">
   </a>
 
-  <div class="nav-actions">
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+
+  <nav class="nav-links" id="navLinks">
+    <div class="nav-actions-mobile">
+      <a href="blog.php" class="btn-nav primary">Blog</a>
+      <a href="../backend/logout.php" class="btn-nav secondary">Sair</a>
+    </div>
+  </nav>
+
+  <div class="nav-actions nav-actions-desktop">
     <a href="blog.php" class="btn-nav primary">Blog</a>
-    <a href="../backend.php/logout.php" class="btn-nav secondary">Sair</a>
+    <a href="../backend/logout.php" class="btn-nav secondary">Sair</a>
   </div>
 </header>
 
@@ -494,7 +506,7 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
 
           <div class="perfil-actions-top">
             <?php if (!$ehMeuPerfil): ?>
-              <a href="../backend.php/seguir_usuario.php?id=<?php echo $usuario["id"]; ?>" class="perfil-btn <?php echo $jaSegue ? 'secondary' : 'primary'; ?>">
+              <a href="../backend/seguir_usuario.php?id=<?php echo $usuario["id"]; ?>" class="perfil-btn <?php echo $jaSegue ? 'secondary' : 'primary'; ?>">
                 <?php echo $jaSegue ? 'Seguindo' : 'Seguir'; ?>
               </a>
             <?php endif; ?>
@@ -524,7 +536,7 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
         </div>
 
         <?php if ($ehMeuPerfil): ?>
-          <form action="../backend.php/atualizar_foto_perfil.php" method="POST" enctype="multipart/form-data" class="perfil-upload-box">
+          <form action="../backend/atualizar_foto_perfil.php" method="POST" enctype="multipart/form-data" class="perfil-upload-box">
             <div class="custom-file-wrapper">
               <input type="file" name="foto_perfil" id="foto_perfil" class="custom-file-input" accept="image/*" required>
               <label for="foto_perfil" class="custom-file-label">Escolher nova foto</label>
@@ -570,7 +582,7 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
           <?php if ($ehMeuPerfil || $_SESSION["usuario_tipo"] === "admin"): ?>
             <div class="post-actions">
               <a href="editar_post.php?id=<?php echo $post["id"]; ?>" class="btn-nav secondary">Editar</a>
-              <a href="../backend.php/excluir_post.php?id=<?php echo $post["id"]; ?>"
+              <a href="../backend/excluir_post.php?id=<?php echo $post["id"]; ?>"
                  class="btn-nav primary"
                  onclick="return confirm('Deseja excluir este post?');">
                 Excluir

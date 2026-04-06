@@ -10,6 +10,9 @@ session_start();
   <link rel="stylesheet" href="https://use.typekit.net/xvn1qry.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="site.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
   <style>
     .user-status {
       color: white;
@@ -47,16 +50,31 @@ session_start();
       <a href="#processo">Processo Criativo</a>
       <a href="#sobre">Sobre Nós</a>
       <a href="#comunidade">Comunidade</a>
+
+      <div class="nav-actions-mobile">
+        <?php if (isset($_SESSION["usuario_id"])): ?>
+          <span class="user-status mobile-only">
+            Olá, <?php echo htmlspecialchars($_SESSION["usuario_nome"]); ?>
+            (<?php echo htmlspecialchars($_SESSION["usuario_tipo"]); ?>)
+          </span>
+          <a href="perfil.php" class="btn-nav secondary">Perfil</a>
+          <a href="../backend/logout.php" class="btn-nav secondary">Sair</a>
+          <a href="blog.php" class="btn-nav primary">Blog</a>
+        <?php else: ?>
+          <a href="../login-page/index.php" class="btn-nav secondary">Login</a>
+          <a href="blog.php" class="btn-nav primary">Blog</a>
+        <?php endif; ?>
+      </div>
     </nav>
 
-    <div class="nav-actions">
+    <div class="nav-actions nav-actions-desktop">
       <?php if (isset($_SESSION["usuario_id"])): ?>
         <span class="user-status">
           Olá, <?php echo htmlspecialchars($_SESSION["usuario_nome"]); ?>
           (<?php echo htmlspecialchars($_SESSION["usuario_tipo"]); ?>)
         </span>
         <a href="perfil.php" class="btn-nav secondary">Perfil</a>
-        <a href="../backend.php/logout.php" class="btn-nav secondary">Sair</a>
+        <a href="../backend/logout.php" class="btn-nav secondary">Sair</a>
         <a href="blog.php" class="btn-nav primary">Blog</a>
       <?php else: ?>
         <a href="../login-page/index.php" class="btn-nav secondary">Login</a>

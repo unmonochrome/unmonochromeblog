@@ -21,17 +21,88 @@ body {
 /* NAVBAR */
 .navbar {
   width: 100%;
-  padding: 10px 42px;
+  padding: 10px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 50;
   background: rgba(16, 15, 24, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 14px;
+  }
+
+  .logo img {
+    height: 54px;
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: 1.8rem;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding: 16px;
+    background: rgba(16, 15, 24, 0.98);
+    flex-direction: column;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .nav-links.show {
+    display: flex;
+  }
+
+  .nav-links a,
+  .nav-actions-mobile a {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-actions-desktop {
+    display: none;
+  }
+
+  .nav-actions-mobile {
+    display: flex;
+  }
+
+  .user-status.mobile-only {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+}
+
+.nav-actions-desktop {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.nav-actions-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.user-status.mobile-only {
+  display: none;
 }
 
 .logo {
@@ -846,26 +917,37 @@ body.image-modal-open {
     padding: 10px 24px;
   }
 
-  .menu-toggle {
-    display: block;
+  .logo img {
+    height: 84px;
   }
 
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 92px;
-    left: 16px;
-    right: 16px;
-    flex-direction: column;
-    gap: 14px;
-    background: rgba(16, 15, 24, 0.96);
-    padding: 20px;
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+  .hero,
+  .gameplay-grid,
+  .cards-grid,
+  .timeline,
+  .team-grid {
+    grid-template-columns: 1fr;
   }
 
-  .nav-links.show {
-    display: flex;
+  .tipos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero {
+    text-align: center;
+  }
+
+  .hero-text {
+    max-width: 100%;
+  }
+
+  .hero-description {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-buttons {
+    justify-content: center;
   }
 
   .logo img {
@@ -987,5 +1069,61 @@ body.image-modal-open {
 
   .footer-links {
     gap: 12px;
+  }
+}
+
+/* OVERRIDE MOBILE NAVBAR - MANTÉM O DESKTOP COMO ESTÁ */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .menu-toggle {
+    display: block !important;
+  }
+
+  .nav-links {
+    display: none !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    width: 100% !important;
+    padding: 16px !important;
+    background: rgba(16, 15, 24, 0.98) !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    z-index: 60 !important;
+  }
+
+  .nav-links.show {
+    display: flex !important;
+  }
+
+  .nav-actions,
+  .nav-actions-desktop {
+    display: none !important;
+  }
+
+  .nav-actions-mobile {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .nav-actions-mobile a,
+  .nav-links > a {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .user-status.mobile-only {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin-bottom: 8px !important;
   }
 }

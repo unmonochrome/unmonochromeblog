@@ -1,6 +1,6 @@
 <?php
-require_once "../backend.php/verificar_login.php";
-require_once "../backend.php/conexao.php";
+require_once "../backend/verificar_login.php";
+require_once "../backend/conexao.php";
 
 if (!isset($_GET["id"])) {
     header("Location: blog.php");
@@ -136,7 +136,15 @@ if ($usuario_tipo !== "admin" && $post["usuario_id"] != $usuario_id) {
       <img src="img/logo-novo.png" alt="UNMONOCHROME">
     </a>
 
-    <div class="nav-actions">
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+
+    <nav class="nav-links" id="navLinks">
+      <div class="nav-actions-mobile">
+        <a href="blog.php" class="btn-nav secondary">Voltar</a>
+      </div>
+    </nav>
+
+    <div class="nav-actions nav-actions-desktop">
       <a href="blog.php" class="btn-nav secondary">Voltar</a>
     </div>
   </header>
@@ -145,7 +153,7 @@ if ($usuario_tipo !== "admin" && $post["usuario_id"] != $usuario_id) {
     <div class="edit-card">
       <h1>Editar postagem</h1>
 
-      <form action="../backend.php/salvar_edicao_post.php" method="POST" enctype="multipart/form-data">
+      <form action="../backend/salvar_edicao_post.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?php echo $post["id"]; ?>">
 
         <label for="titulo">Título</label>

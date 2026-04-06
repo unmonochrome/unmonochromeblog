@@ -583,3 +583,229 @@ input:-webkit-autofill:active {
     display: none;
   }
 }
+
+/* ===== AJUSTES GERAIS PRA NÃO QUEBRAR NO MOBILE ===== */
+html, body {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 90px 16px 24px;
+  overflow-x: hidden;
+  overflow-y: auto; /* antes estava hidden */
+}
+
+.card-login-wrapper {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.card-login {
+  width: 100%;
+  padding: 32px 28px 24px;
+}
+
+.character-sit {
+  position: absolute;
+  top: -105px;
+  left: -10px;
+  width: 190px;
+  height: 190px;
+}
+
+.character-shadow {
+  top: 18px;
+  left: 34px;
+  width: 100px;
+  height: 18px;
+}
+
+/* evita qualquer elemento estourar largura */
+.card-login,
+.textfield,
+.input-wrapper,
+.textfield input,
+.btn-login {
+  max-width: 100%;
+}
+
+.textfield input {
+  min-width: 0;
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 768px) {
+  body {
+    align-items: flex-start;
+    padding: 80px 14px 20px;
+  }
+
+  .card-login-wrapper {
+    max-width: 100%;
+  }
+
+  .card-login {
+    padding: 28px 22px 22px;
+    border-radius: 20px;
+  }
+
+  .card-login h1 {
+    font-size: 2.4rem;
+    margin-bottom: 16px;
+  }
+
+  .textfield label {
+    font-size: 1.1rem;
+  }
+
+  .textfield input {
+    padding: 14px 42px 14px 42px;
+    font-size: 1rem;
+    border-radius: 12px;
+  }
+
+  .btn-login {
+    padding: 14px;
+    font-size: 1rem;
+    letter-spacing: 2px;
+  }
+
+  .auth-switch-text,
+  .auth-message {
+    font-size: 0.98rem;
+  }
+
+  .character-sit {
+    width: 150px;
+    height: 150px;
+    top: -78px;
+    left: 0;
+  }
+
+  .character-shadow {
+    top: 16px;
+    left: 26px;
+    width: 82px;
+    height: 14px;
+  }
+}
+
+/* ===== CELULAR ===== */
+@media (max-width: 480px) {
+  body {
+    padding: 72px 12px 18px;
+  }
+
+  body::before {
+    width: 240px;
+    height: 240px;
+    left: -30px;
+    top: 20px;
+  }
+
+  body::after {
+    width: 220px;
+    height: 220px;
+    right: -40px;
+    bottom: 20px;
+  }
+
+  .card-login-wrapper {
+    max-width: 100%;
+  }
+
+  .card-login {
+    padding: 22px 16px 18px;
+    border-radius: 18px;
+  }
+
+  .card-login h1 {
+    font-size: 2rem;
+    margin-bottom: 14px;
+  }
+
+  .textfield {
+    margin: 10px 0;
+  }
+
+  .textfield label {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .input-icon {
+    left: 14px;
+    font-size: 0.95rem;
+  }
+
+  .textfield input {
+    padding: 13px 40px 13px 38px;
+    font-size: 0.98rem;
+  }
+
+  .toggle-password {
+    right: 12px;
+    font-size: 0.95rem;
+  }
+
+  .btn-login {
+    margin-top: 16px;
+    padding: 13px;
+    font-size: 0.98rem;
+    letter-spacing: 1.5px;
+  }
+
+  .auth-switch-text {
+    margin-top: 12px;
+    font-size: 0.95rem;
+  }
+
+  .auth-message {
+    font-size: 0.92rem;
+    padding: 9px 10px;
+  }
+
+  .character-sit {
+    width: 110px;
+    height: 110px;
+    top: -56px;
+    left: 2px;
+  }
+
+  .character-shadow {
+    top: 14px;
+    left: 18px;
+    width: 58px;
+    height: 10px;
+    filter: blur(8px);
+  }
+}
+
+/* ===== CELULAR MUITO PEQUENO ===== */
+@media (max-width: 360px) {
+  .card-login {
+    padding: 20px 14px 16px;
+  }
+
+  .card-login h1 {
+    font-size: 1.8rem;
+  }
+
+  .textfield input {
+    font-size: 0.95rem;
+  }
+
+  .character-sit {
+    display: none;
+  }
+
+  .character-shadow {
+    display: none;
+  }
+}

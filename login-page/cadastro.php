@@ -25,7 +25,7 @@
 
       <h1>CADASTRO</h1>
 
-      <form action="../backend.php/cadastrar_usuario.php" method="POST" style="width:100%;" id="registerForm">
+      <form action="../backend/cadastrar_usuario.php" method="POST" style="width:100%;" id="registerForm">
         <div class="textfield">
           <label for="usuario">Usuário</label>
           <div class="input-wrapper">
