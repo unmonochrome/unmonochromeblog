@@ -1,7 +1,7 @@
 .blog-container {
   max-width: 1000px;
-  margin: 40px auto;
-  padding: 20px;
+  margin: 2.5rem auto;
+  padding: 1.25rem;
 }
 
 .blog-title {
@@ -17,9 +17,9 @@
 }
 
 .feedback {
-  padding: 14px 18px;
+  padding: 0.875rem 1.125rem;
   border-radius: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -439,4 +439,67 @@
 .post-content {
   word-break: break-word;
   overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  .blog-container {
+    max-width: 100%;
+    margin: 1rem auto;
+    padding: 1rem;
+  }
+
+  .blog-title {
+    font-size: 2rem;
+  }
+
+  .blog-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .blog-form {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-card {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .post-content {
+    font-size: 1rem;
+  }
+
+  .post-author-avatar,
+  .post-author-fallback {
+    width: 40px;
+    height: 40px;
+  }
+
+  .post-author-name {
+    font-size: 1rem;
+  }
+
+  .post-author-date {
+    font-size: 0.9rem;
+  }
+
+  .custom-file-label {
+    min-height: 2.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .blog-form input,
+  .blog-form textarea {
+    padding: 0.75rem;
+  }
+
+  .comment-item {
+    padding: 0.75rem;
+  }
 }

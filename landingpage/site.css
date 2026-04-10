@@ -21,7 +21,7 @@ body {
 /* NAVBAR */
 .navbar {
   width: 100%;
-  padding: 10px 16px;
+  padding: 0.625rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,11 +35,11 @@ body {
 
 @media (max-width: 768px) {
   .navbar {
-    padding: 10px 14px;
+    padding: 0.625rem 0.875rem;
   }
 
   .logo img {
-    height: 54px;
+    height: 3.375rem;
   }
 
   .menu-toggle {
@@ -53,10 +53,10 @@ body {
     top: 100%;
     left: 0;
     width: 100%;
-    padding: 16px;
+    padding: 1rem;
     background: rgba(16, 15, 24, 0.98);
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
@@ -113,7 +113,7 @@ body {
 }
 
 .logo img {
-  height: 80px;
+  height: 5rem;
   width: auto;
   display: block;
   transition: opacity 0.3s ease;
@@ -185,16 +185,18 @@ body {
 }
 
 .btn-nav {
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   font-size: 1.05rem;
   font-weight: 700;
+  min-height: 2.75rem;
 }
 
 .btn {
-  padding: 14px 24px;
+  padding: 0.875rem 1.5rem;
   font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: 0.5px;
+  min-height: 2.75rem;
 }
 
 .primary {
@@ -224,15 +226,22 @@ body {
 /* HERO */
 .hero {
   min-height: 100vh;
-  padding: 60px 70px 40px;
+  padding: 3.75rem 4.375rem 2.5rem;
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   align-items: center;
-  gap: 30px;
+  gap: 1.875rem;
 }
 
 .hero-text {
   max-width: 700px;
+}
+
+.hero-image {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tag,
@@ -1075,9 +1084,9 @@ body.image-modal-open {
 /* OVERRIDE MOBILE NAVBAR - MANTÉM O DESKTOP COMO ESTÁ */
 @media (max-width: 768px) {
   .navbar {
-    padding: 10px 14px;
+    padding: 0.625rem 0.875rem;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 0.625rem;
   }
 
   .menu-toggle {
@@ -1090,10 +1099,10 @@ body.image-modal-open {
     top: 100% !important;
     left: 0 !important;
     width: 100% !important;
-    padding: 16px !important;
+    padding: 1rem !important;
     background: rgba(16, 15, 24, 0.98) !important;
     flex-direction: column !important;
-    gap: 12px !important;
+    gap: 0.75rem !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
     z-index: 60 !important;
   }
@@ -1110,7 +1119,7 @@ body.image-modal-open {
   .nav-actions-mobile {
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px !important;
+    gap: 0.75rem !important;
     width: 100% !important;
   }
 
@@ -1124,6 +1133,26 @@ body.image-modal-open {
     display: block !important;
     width: 100% !important;
     text-align: center !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 2rem 1rem 1rem;
+    gap: 1rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+
+  .hero-description {
+    font-size: 1.2rem;
+  }
+
+  .hero-buttons {
+    justify-content: center;
   }
 }
