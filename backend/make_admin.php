@@ -4,13 +4,13 @@ require_once 'conexao.php';
 require_once 'csrf.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../landingpage/admin_users.php');
+    header('Location: ../landingpage/usuarios_admin.php');
     exit;
 }
 
 $csrf_token = $_POST['csrf_token'] ?? '';
 if (!verifyCSRFToken($csrf_token)) {
-    header('Location: ../landingpage/admin_users.php?erro=csrf');
+    header('Location: ../landingpage/usuarios_admin.php?erro=csrf');
     exit;
 }
 
@@ -24,7 +24,7 @@ $current_id = (int)$_SESSION['usuario_id'];
 // verifica se usuário atual é admin
 $stmt = $conn->prepare('SELECT tipo FROM usuarios WHERE id = ? LIMIT 1');
 if (!$stmt) {
-    header('Location: ../landingpage/admin_users.php?erro=db_error');
+    header('Location: ../landingpage/usuarios_admin.php?erro=db_error');
     exit;
 }
 $stmt->bind_param('i', $current_id);
@@ -36,28 +36,28 @@ if ($r->num_rows === 0) {
 }
 $me = $r->fetch_assoc();
 if ($me['tipo'] !== 'admin') {
-    header('Location: ../landingpage/admin_users.php?erro=forbidden');
+    header('Location: ../landingpage/usuarios_admin.php?erro=forbidden');
     exit;
 }
 
 $target_id = (int)($_POST['user_id'] ?? 0);
 if ($target_id <= 0) {
-    header('Location: ../landingpage/admin_users.php?erro=invalid');
+    header('Location: ../landingpage/usuarios_admin.php?erro=invalid');
     exit;
 }
 
 $upd = $conn->prepare('UPDATE usuarios SET tipo = ? WHERE id = ?');
 if (!$upd) {
-    header('Location: ../landingpage/admin_users.php?erro=db_error');
+    header('Location: ../landingpage/usuarios_admin.php?erro=db_error');
     exit;
 }
 $role = 'admin';
 $upd->bind_param('si', $role, $target_id);
 if ($upd->execute()) {
-    header('Location: ../landingpage/admin_users.php?sucesso=1');
+    header('Location: ../landingpage/usuarios_admin.php?sucesso=1');
     exit;
 } else {
-    header('Location: ../landingpage/admin_users.php?erro=db_error');
+    header('Location: ../landingpage/usuarios_admin.php?erro=db_error');
     exit;
 }
 

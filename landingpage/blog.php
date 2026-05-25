@@ -2,62 +2,72 @@
 require_once "../backend/verificar_login.php";
 require_once "../backend/conexao.php";
 
-$sql = "SELECT posts.*, usuarios.usuario, usuarios.tipo, usuarios.foto_perfil
+$pageTitle = "Blog - UNMONOCHROME";
+$extraCss = ["blog.css"];
+$extraJs = ["blog-interacoes.js"];
+
+require_once "includes/header.php";
+
+// 1. Buscar posts + total de curtidas em uma única query
+$sql = "SELECT posts.*, usuarios.usuario, usuarios.tipo, usuarios.foto_perfil,
+               COUNT(curtidas.id) AS total_likes
         FROM posts
         INNER JOIN usuarios ON posts.usuario_id = usuarios.id
-        ORDER BY data_postagem DESC";
+        LEFT JOIN curtidas ON curtidas.post_id = posts.id
+        GROUP BY posts.id
+        ORDER BY posts.data_postagem DESC";
 
 $resultado = $conn->query($sql);
+
+// 2. Buscar todos os posts que o usuário atual curtiu
+$postsCurtidos = [];
+$postIds = [];
+$posts = [];
+
+if ($resultado && $resultado->num_rows > 0) {
+    while ($row = $resultado->fetch_assoc()) {
+        $postIds[] = $row['id'];
+        $posts[$row['id']] = $row;
+    }
+
+    if (!empty($postIds)) {
+        $placeholders = implode(',', array_fill(0, count($postIds), '?'));
+        $stmtCurtidas = $conn->prepare("SELECT post_id FROM curtidas WHERE usuario_id = ? AND post_id IN ($placeholders)");
+        $types = 'i' . str_repeat('i', count($postIds));
+        $params = array_merge([$_SESSION["usuario_id"]], $postIds);
+        $stmtCurtidas->bind_param($types, ...$params);
+        $stmtCurtidas->execute();
+        $resCurtidas = $stmtCurtidas->get_result();
+
+        while ($curtida = $resCurtidas->fetch_assoc()) {
+            $postsCurtidos[$curtida['post_id']] = true;
+        }
+    }
+}
+
+// 3. Buscar todos os comentários de uma vez
+$comentariosPorPost = [];
+if (!empty($postIds)) {
+    $placeholders = implode(',', array_fill(0, count($postIds), '?'));
+    $sqlComentarios = "SELECT comentarios.*, usuarios.usuario, usuarios.tipo, usuarios.foto_perfil
+                       FROM comentarios
+                       INNER JOIN usuarios ON comentarios.usuario_id = usuarios.id
+                       WHERE comentarios.post_id IN ($placeholders)
+                       ORDER BY comentarios.data_comentario ASC";
+
+    $stmtComentarios = $conn->prepare($sqlComentarios);
+    $types = str_repeat('i', count($postIds));
+    $stmtComentarios->bind_param($types, ...$postIds);
+    $stmtComentarios->execute();
+    $resComentarios = $stmtComentarios->get_result();
+
+    while ($comentario = $resComentarios->fetch_assoc()) {
+        $comentariosPorPost[$comentario['post_id']][] = $comentario;
+    }
+}
 ?>
-<!DOCTYPE html>
-<html lang="pt-BR">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog - UNMONOCHROME</title>
-  <link rel="stylesheet" href="https://use.typekit.net/xvn1qry.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="site.css">
-  <link rel="stylesheet" href="blog.css">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="img/favicon.png">
-<link rel="apple-touch-icon" href="img/favicon.png">
-</head>
-
-<body>
-  <a href="#main-content" class="skip-link">Pular para o conteúdo</a>
-
-  <header class="navbar">
-    <a href="index.php#inicio" class="logo">
-      <img src="img/logo-novo.png" alt="UNMONOCHROME">
-    </a>
-
-    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
-
-    <nav class="nav-links" id="navLinks">
-      <a href="index.php#inicio">Início</a>
-      <a href="index.php#gameplay">Gameplay</a>
-      <a href="index.php#daltonismo">Daltonismo</a>
-      <a href="index.php#processo">Processo Criativo</a>
-      <a href="index.php#sobre">Sobre Nós</a>
-      <a href="index.php#comunidade">Comunidade</a>
-
-      <div class="nav-actions-mobile">
-        <a href="perfil.php" class="btn-nav secondary">Perfil</a>
-        <a href="blog.php" class="btn-nav primary">Blog</a>
-        <a href="../backend/logout.php" class="btn-nav secondary">Sair</a>
-      </div>
-    </nav>
-
-    <div class="nav-actions nav-actions-desktop">
-      <a href="perfil.php" class="btn-nav secondary">Perfil</a>
-      <a href="blog.php" class="btn-nav primary">Blog</a>
-      <a href="../backend/logout.php" class="btn-nav secondary">Sair</a>
-    </div>
-  </header>
-
-  <main id="main-content" class="blog-container" role="main">
+  <div class="blog-container">
     <h1 class="blog-title">Blog da Comunidade</h1>
     <p class="blog-subtitle">
       Olá, <?php echo htmlspecialchars($_SESSION["usuario_nome"]); ?>
@@ -87,9 +97,7 @@ $resultado = $conn->query($sql);
     <?php endif; ?>
 
     <form class="blog-form" action="../backend/criar_post.php" method="POST" enctype="multipart/form-data" id="criarPostForm">
-      <?php
-      require_once "../backend/csrf.php";
-      ?>
+      <?php require_once "../backend/csrf.php"; ?>
       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
       
       <h2>Criar nova postagem</h2>
@@ -110,37 +118,13 @@ $resultado = $conn->query($sql);
       <button type="submit" class="btn primary" id="submitPostBtn">Publicar</button>
     </form>
 
-    <?php if ($resultado && $resultado->num_rows > 0): ?>
-      <?php while ($post = $resultado->fetch_assoc()): ?>
+    <?php if (!empty($posts)): ?>
+      <?php foreach ($posts as $post): ?>
         <?php
-        $sqlLikes = "SELECT COUNT(*) AS total FROM curtidas WHERE post_id = ?";
-        $stmtLikes = $conn->prepare($sqlLikes);
-        $stmtLikes->bind_param("i", $post["id"]);
-        $stmtLikes->execute();
-        $resLikes = $stmtLikes->get_result();
-        $totalLikes = $resLikes->fetch_assoc()["total"];
-
-        $jaCurtiu = false;
-        $sqlJaCurtiu = "SELECT id FROM curtidas WHERE usuario_id = ? AND post_id = ?";
-        $stmtJaCurtiu = $conn->prepare($sqlJaCurtiu);
-        $stmtJaCurtiu->bind_param("ii", $_SESSION["usuario_id"], $post["id"]);
-        $stmtJaCurtiu->execute();
-        $resJaCurtiu = $stmtJaCurtiu->get_result();
-
-        if ($resJaCurtiu->num_rows > 0) {
-          $jaCurtiu = true;
-        }
-
-        $podeExcluir = false;
-        $podeEditar = false;
-
-        if ($_SESSION["usuario_tipo"] === "admin") {
-          $podeExcluir = true;
-          $podeEditar = true;
-        } elseif ($_SESSION["usuario_id"] == $post["usuario_id"]) {
-          $podeExcluir = true;
-          $podeEditar = true;
-        }
+        $totalLikes = $post['total_likes'] ?? 0;
+        $jaCurtiu = isset($postsCurtidos[$post['id']]);
+        $podeExcluir = ($_SESSION["usuario_tipo"] === "admin" || $_SESSION["usuario_id"] == $post["usuario_id"]);
+        $podeEditar = $podeExcluir;
         ?>
 
         <article class="post-card">
@@ -149,10 +133,9 @@ $resultado = $conn->query($sql);
           <div class="post-author-box">
             <?php if (!empty($post["foto_perfil"])): ?>
               <a href="perfil.php?id=<?php echo $post['usuario_id']; ?>">
-                <img
-                  src="profile_pics/<?php echo htmlspecialchars($post["foto_perfil"]); ?>"
-                  class="post-author-avatar"
-                  alt="Foto de perfil de <?php echo htmlspecialchars($post["usuario"]); ?>">
+                <img src="profile_pics/<?php echo htmlspecialchars($post["foto_perfil"]); ?>"
+                     class="post-author-avatar"
+                     alt="Foto de perfil de <?php echo htmlspecialchars($post["usuario"]); ?>">
               </a>
             <?php else: ?>
               <a href="perfil.php?id=<?php echo $post['usuario_id']; ?>" class="post-author-fallback">
@@ -176,10 +159,9 @@ $resultado = $conn->query($sql);
 
           <div class="post-body">
             <?php if (!empty($post["imagem"])): ?>
-              <img
-                src="uploads/<?php echo htmlspecialchars($post["imagem"]); ?>"
-                class="post-image"
-                alt="Imagem da postagem: <?php echo htmlspecialchars($post["titulo"]); ?>">
+              <img src="uploads/<?php echo htmlspecialchars($post["imagem"]); ?>"
+                   class="post-image"
+                   alt="Imagem da postagem: <?php echo htmlspecialchars($post["titulo"]); ?>">
             <?php endif; ?>
 
             <div class="post-content">
@@ -191,14 +173,8 @@ $resultado = $conn->query($sql);
 
           <div class="post-like-row" style="margin-bottom:15px; display:flex; align-items:center; gap:12px;">
             <a href="../backend/curtir_post.php?post_id=<?php echo $post['id']; ?>"
-               style="
-                 text-decoration:none;
-                 font-weight:700;
-                 display:flex;
-                 align-items:center;
-                 gap:6px;
-                 color: <?php echo $jaCurtiu ? '#ff4f86' : 'rgba(255,255,255,0.6)'; ?>;
-               ">
+               style="text-decoration:none; font-weight:700; display:flex; align-items:center; gap:6px;
+                      color: <?php echo $jaCurtiu ? '#ff4f86' : 'rgba(255,255,255,0.6)'; ?>;">
               <?php echo $jaCurtiu ? '❤️ Curtido' : '🤍 Curtir'; ?>
             </a>
 
@@ -212,7 +188,6 @@ $resultado = $conn->query($sql);
               <?php if ($podeEditar): ?>
                 <a href="editar_post.php?id=<?php echo $post['id']; ?>">Editar postagem</a>
               <?php endif; ?>
-
               <?php if ($podeExcluir): ?>
                 <a href="../backend/excluir_post.php?id=<?php echo $post['id']; ?>"
                    onclick="return confirm('Tem certeza que deseja excluir esta postagem?');">
@@ -225,38 +200,20 @@ $resultado = $conn->query($sql);
           <div class="comment-box">
             <h3>Comentários</h3>
 
-            <?php
-            $sqlComentarios = "SELECT comentarios.*, usuarios.usuario, usuarios.tipo, usuarios.foto_perfil
-                               FROM comentarios
-                               INNER JOIN usuarios ON comentarios.usuario_id = usuarios.id
-                               WHERE comentarios.post_id = ?
-                               ORDER BY comentarios.data_comentario ASC";
-            $stmtComentarios = $conn->prepare($sqlComentarios);
-            $stmtComentarios->bind_param("i", $post["id"]);
-            $stmtComentarios->execute();
-            $comentarios = $stmtComentarios->get_result();
+            <?php 
+            $comentarios = $comentariosPorPost[$post['id']] ?? [];
+            if (!empty($comentarios)): 
             ?>
-
-            <?php if ($comentarios->num_rows > 0): ?>
-              <?php while ($comentario = $comentarios->fetch_assoc()): ?>
+              <?php foreach ($comentarios as $comentario): ?>
                 <div class="comment-item">
                   <div style="display:flex; gap:10px; align-items:flex-start;">
-
                     <?php if (!empty($comentario["foto_perfil"])): ?>
-                      <img
-                        src="profile_pics/<?php echo htmlspecialchars($comentario["foto_perfil"]); ?>"
-                        alt="Foto de perfil de <?php echo htmlspecialchars($comentario["usuario"]); ?>"
-                        style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                      <img src="profile_pics/<?php echo htmlspecialchars($comentario["foto_perfil"]); ?>"
+                           alt="Foto de perfil de <?php echo htmlspecialchars($comentario["usuario"]); ?>"
+                           style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
                     <?php else: ?>
-                      <div style="
-                        width:40px; height:40px;
-                        border-radius:50%;
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        background:linear-gradient(135deg,#ff2d73,#ff4f86);
-                        color:#fff;
-                        font-weight:900;">
+                      <div style="width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+                                  background:linear-gradient(135deg,#ff2d73,#ff4f86); color:#fff; font-weight:900;">
                         <?php echo strtoupper(substr($comentario["usuario"], 0, 1)); ?>
                       </div>
                     <?php endif; ?>
@@ -282,18 +239,15 @@ $resultado = $conn->query($sql);
                         </div>
                       <?php endif; ?>
                     </div>
-
                   </div>
                 </div>
-              <?php endwhile; ?>
+              <?php endforeach; ?>
             <?php else: ?>
               <p class="comment-empty">Nenhum comentário ainda.</p>
             <?php endif; ?>
 
             <form class="comment-form" action="../backend/criar_comentario.php" method="POST">
-              <?php
-              require_once "../backend/csrf.php";
-              ?>
+              <?php require_once "../backend/csrf.php"; ?>
               <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
               <input type="hidden" name="post_id" value="<?php echo $post["id"]; ?>">
               <textarea name="conteudo" placeholder="Escreva um comentário..." required></textarea>
@@ -301,18 +255,14 @@ $resultado = $conn->query($sql);
             </form>
           </div>
         </article>
-      <?php endwhile; ?>
+      <?php endforeach; ?>
     <?php else: ?>
       <div class="post-card">
         Ainda não existem postagens no blog. Seja o primeiro a publicar!
       </div>
     <?php endif; ?>
-  </main>
+  </div>
 
-  <link rel="stylesheet" href="../a11y.css">
-  <script src="../a11y.js"></script>
-  <script src="script.js?v=3"></script>
-  <script src="blog-interactions.js"></script>
-</body>
-
-</html>
+<?php
+require_once "includes/footer.php";
+?>

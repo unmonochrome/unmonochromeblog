@@ -129,16 +129,6 @@
         if (panel) panel.classList.toggle('open');
       }
     });
-    // top global button for quick access
-    const topBtn = document.createElement('button');
-    topBtn.className = 'a11y-top-btn';
-    topBtn.setAttribute('aria-label', 'Abrir opções de acessibilidade');
-    topBtn.innerText = 'A';
-    topBtn.addEventListener('click', () => {
-      const panel = document.querySelector('.a11y-panel');
-      if (panel) panel.classList.toggle('open');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    document.body.appendChild(topBtn);
+    // REMOVIDO: botão extra do canto superior esquerdo
   });
 })();

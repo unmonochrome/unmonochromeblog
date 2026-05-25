@@ -579,7 +579,7 @@ $isAdmin = ($curTipo === 'admin');
         <?php endif; ?>
         <?php if ($isAdmin): ?>
           <div style="margin-top:12px;">
-            <a href="admin_users.php" class="perfil-btn secondary">Gerenciar usuários</a>
+            <a href="usuarios_admin.php" class="perfil-btn secondary">Gerenciar usuários</a>
           </div>
         <?php endif; ?>
       </div>
