@@ -26,6 +26,7 @@ $resultado = $conn->query($sql);
 </head>
 
 <body>
+  <a href="#main-content" class="skip-link">Pular para o conteúdo</a>
 
   <header class="navbar">
     <a href="index.php#inicio" class="logo">
@@ -56,7 +57,7 @@ $resultado = $conn->query($sql);
     </div>
   </header>
 
-  <main class="blog-container">
+  <main id="main-content" class="blog-container" role="main">
     <h1 class="blog-title">Blog da Comunidade</h1>
     <p class="blog-subtitle">
       Olá, <?php echo htmlspecialchars($_SESSION["usuario_nome"]); ?>
@@ -85,23 +86,28 @@ $resultado = $conn->query($sql);
       </div>
     <?php endif; ?>
 
-    <form class="blog-form" action="../backend/criar_post.php" method="POST" enctype="multipart/form-data">
+    <form class="blog-form" action="../backend/criar_post.php" method="POST" enctype="multipart/form-data" id="criarPostForm">
+      <?php
+      require_once "../backend/csrf.php";
+      ?>
+      <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
+      
       <h2>Criar nova postagem</h2>
 
       <label for="titulo">Título</label>
-      <input type="text" id="titulo" name="titulo" required>
+      <input type="text" id="titulo" name="titulo" maxlength="200" required>
 
       <label for="conteudo">Conteúdo</label>
-      <textarea id="conteudo" name="conteudo" required></textarea>
+      <textarea id="conteudo" name="conteudo" maxlength="5000" required></textarea>
 
-      <label>Imagem (opcional)</label>
+      <label>Imagem (opcional - máx. 5MB)</label>
       <div class="custom-file-wrapper">
         <input type="file" id="imagem" name="imagem" class="custom-file-input" accept="image/*">
         <label for="imagem" class="custom-file-label">Escolher imagem</label>
         <span class="file-name" id="file-name-post">Nenhum arquivo escolhido</span>
       </div>
 
-      <button type="submit" class="btn primary">Publicar</button>
+      <button type="submit" class="btn primary" id="submitPostBtn">Publicar</button>
     </form>
 
     <?php if ($resultado && $resultado->num_rows > 0): ?>
@@ -285,6 +291,10 @@ $resultado = $conn->query($sql);
             <?php endif; ?>
 
             <form class="comment-form" action="../backend/criar_comentario.php" method="POST">
+              <?php
+              require_once "../backend/csrf.php";
+              ?>
+              <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
               <input type="hidden" name="post_id" value="<?php echo $post["id"]; ?>">
               <textarea name="conteudo" placeholder="Escreva um comentário..." required></textarea>
               <button type="submit" class="btn secondary">Comentar</button>
@@ -299,7 +309,10 @@ $resultado = $conn->query($sql);
     <?php endif; ?>
   </main>
 
+  <link rel="stylesheet" href="../a11y.css">
+  <script src="../a11y.js"></script>
   <script src="script.js?v=3"></script>
+  <script src="blog-interactions.js"></script>
 </body>
 
 </html>

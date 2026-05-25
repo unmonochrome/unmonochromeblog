@@ -39,6 +39,7 @@ body::after {
 }
 
 body::before {
+
   width: 420px;
   height: 420px;
   left: 8%;
@@ -244,7 +245,8 @@ body::after {
   padding: 16px 46px 16px 44px;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.07);
+  /* use a darker translucent background so inputs don't look bright white */
+  background: rgba(0, 0, 0, 0.35);
   color: #f4eff8;
   font-size: 1.15rem;
   outline: none;
@@ -300,8 +302,9 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-text-fill-color: #f4eff8 !important;
-  -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.07) inset !important;
-  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.07) inset !important;
+  /* keep autofill background dark to match theme */
+  -webkit-box-shadow: 0 0 0 1000px rgba(0,0,0,0.35) inset !important;
+  box-shadow: 0 0 0 1000px rgba(0,0,0,0.35) inset !important;
   border: 1px solid rgba(255, 255, 255, 0.06) !important;
   transition: background-color 9999s ease-in-out 0s;
 }
@@ -385,23 +388,26 @@ input:-webkit-autofill:active {
 .auth-message {
   margin-top: 15px;
   text-align: center;
-  padding: 10px 12px;
+  padding: 14px 16px;
   border-radius: 12px;
   font-size: 1rem;
   font-weight: 700;
   animation: messagePop 0.35s ease;
+  border: 2px solid;
 }
 
 .auth-message.error {
-  color: #ff99b7;
-  background: rgba(255, 79, 134, 0.10);
-  border: 1px solid rgba(255, 79, 134, 0.20);
+  color: #ff6b9d;
+  background: rgba(255, 79, 134, 0.15);
+  border-color: rgba(255, 79, 134, 0.4);
+  box-shadow: 0 0 16px rgba(255, 79, 134, 0.12);
 }
 
 .auth-message.success {
-  color: #7dffb3;
-  background: rgba(72, 187, 120, 0.10);
-  border: 1px solid rgba(72, 187, 120, 0.20);
+  color: #5dff95;
+  background: rgba(72, 187, 120, 0.15);
+  border-color: rgba(72, 187, 120, 0.4);
+  box-shadow: 0 0 16px rgba(72, 187, 120, 0.12);
 }
 
 /* CADASTRO */
@@ -813,4 +819,14 @@ body {
   .character-shadow {
     display: none;
   }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #dfe3eb inset !important;
+    -webkit-text-fill-color: #000 !important;
+    caret-color: #000 !important;
+    transition: background-color 5000s ease-in-out 0s;
 }

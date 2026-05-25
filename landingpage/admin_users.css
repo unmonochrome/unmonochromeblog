@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@400;700;900&display=swap');
+
+/* Define a fonte globalmente */
+body {
+  font-family: "Darker Grotesque", sans-serif;
+}
+
+/* Admin Users - mesmo "look" do site */
+
+.admin-users-page {
+  padding: 3rem 1.25rem 2.25rem;
+}
+
+.admin-users-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.admin-users-page h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1;
+  margin: 0 0 24px;
+  color: #fff;
+  font-weight: 900;
+}
+
+/* Mensagens */
+.auth-message {
+  padding: 0.875rem 1.125rem;
+  border-radius: 14px;
+  margin: 0 0 1.25rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.auth-message.success {
+  background: rgba(72, 187, 120, 0.12);
+  color: #7dffb3;
+  border-color: rgba(72, 187, 120, 0.25);
+}
+
+.auth-message.error {
+  background: rgba(255, 79, 134, 0.12);
+  color: #ff8fab;
+  border-color: rgba(255, 79, 134, 0.25);
+}
+
+/* Tabela */
+.admin-users-page table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+}
+
+.admin-users-page thead th {
+  text-align: left;
+  padding: 1rem 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-users-page tbody td {
+  padding: 1rem 1.1rem;
+  font-size: 1.02rem;
+  color: rgba(255, 255, 255, 0.86);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: middle;
+}
+
+.admin-users-page tbody tr {
+  transition: background 0.25s ease;
+}
+
+.admin-users-page tbody tr:hover {
+  background: rgba(255, 79, 134, 0.07);
+}
+
+/* Botões */
+.admin-users-page table button,
+.admin-users-page .btn {
+  text-decoration: none;
+  border-radius: 12px;
+  transition: 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0.875rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  min-height: 2.75rem;
+  color: #fff;
+  background: linear-gradient(90deg, #ff2d73, #ff4f86);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 12px 30px rgba(255, 45, 115, 0.22);
+}
+
+.admin-users-page table button:hover,
+.admin-users-page .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(255, 45, 115, 0.32);
+}
+
+/* Texto account própria */
+.admin-users-page .self-account {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 800;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .admin-users-page {
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .admin-users-page table {
+    border-radius: 18px;
+  }
+
+  .admin-users-page thead {
+    display: none;
+  }
+
+  .admin-users-page tbody tr {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+  }
+
+  .admin-users-page tbody td {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0;
+    border-bottom: none;
+  }
+
+  .admin-users-page tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.25rem;
+  }
+}

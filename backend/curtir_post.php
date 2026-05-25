@@ -15,6 +15,18 @@ if (!isset($_GET["post_id"])) {
 $usuario_id = $_SESSION["usuario_id"];
 $post_id = intval($_GET["post_id"]);
 
+// Validar se post existe
+$sqlPost = "SELECT id FROM posts WHERE id = ?";
+$stmtPost = $conn->prepare($sqlPost);
+$stmtPost->bind_param("i", $post_id);
+$stmtPost->execute();
+$resPost = $stmtPost->get_result();
+
+if ($resPost->num_rows === 0) {
+    header("Location: ../landingpage/blog.php?erro=post_nao_encontrado");
+    exit;
+}
+
 // verifica se já curtiu
 $sqlVerifica = "SELECT id FROM curtidas WHERE usuario_id = ? AND post_id = ?";
 $stmtVerifica = $conn->prepare($sqlVerifica);

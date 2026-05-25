@@ -1,0 +1,25 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+/landingpage/uploads/*
+!/landingpage/uploads/.gitkeep
+
+/landingpage/profile_pics/*
+!/landingpage/profile_pics/.gitkeep
+
+# Logs
+*.log

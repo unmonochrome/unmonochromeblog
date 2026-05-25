@@ -5,7 +5,7 @@ require_once "../backend/conexao.php";
 $usuario_logado_id = $_SESSION["usuario_id"];
 $usuario_id = isset($_GET["id"]) ? intval($_GET["id"]) : $usuario_logado_id;
 
-$sqlUsuario = "SELECT id, usuario, tipo, data_cadastro, foto_perfil FROM usuarios WHERE id = ?";
+$sqlUsuario = "SELECT id, usuario, tipo, data_cadastro, foto_perfil, email FROM usuarios WHERE id = ?";
 $stmtUsuario = $conn->prepare($sqlUsuario);
 $stmtUsuario->bind_param("i", $usuario_id);
 $stmtUsuario->execute();
@@ -64,6 +64,17 @@ $stmtPostsUsuario->execute();
 $postsUsuario = $stmtPostsUsuario->get_result();
 
 $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
+
+// verifica tipo do usuario logado para mostrar controles admin
+$stmtCur = $conn->prepare('SELECT tipo FROM usuarios WHERE id = ? LIMIT 1');
+$stmtCur->bind_param('i', $usuario_logado_id);
+$stmtCur->execute();
+$resCur = $stmtCur->get_result();
+$curTipo = null;
+if ($resCur && $resCur->num_rows > 0) {
+  $curTipo = $resCur->fetch_assoc()['tipo'];
+}
+$isAdmin = ($curTipo === 'admin');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -441,6 +452,7 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Pular para o conteúdo</a>
 
 <header class="navbar">
   <a href="index.php" class="logo">
@@ -462,7 +474,7 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
   </div>
 </header>
 
-<main class="perfil-container">
+  <main id="main-content" class="perfil-container" role="main">
   <?php if (isset($_GET["sucesso"]) && $_GET["sucesso"] === "foto_atualizada"): ?>
     <div class="feedback success">Foto de perfil atualizada com sucesso!</div>
   <?php endif; ?>
@@ -504,6 +516,21 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
           <h1 class="perfil-nome"><?php echo htmlspecialchars($usuario["usuario"]); ?></h1>
           <span class="perfil-user-badge"><?php echo $ehMeuPerfil ? 'Seu perfil' : 'Perfil público'; ?></span>
 
+          <?php if ($ehMeuPerfil): ?>
+            <?php if (empty($usuario['email'])): ?>
+              <div style="margin-left:12px;">
+                <form method="POST" action="../backend/update_email.php" style="display:flex;align-items:center;gap:8px;">
+                  <?php require_once "../backend/csrf.php"; ?>
+                  <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
+                  <input type="email" name="email" placeholder="Adicione seu email" required style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#fff;">
+                  <button type="submit" class="perfil-btn primary">Salvar</button>
+                </form>
+              </div>
+            <?php else: ?>
+              <div style="margin-left:12px;color:rgba(255,255,255,0.9);">Email: <?php echo htmlspecialchars($usuario['email']); ?></div>
+            <?php endif; ?>
+          <?php endif; ?>
+
           <div class="perfil-actions-top">
             <?php if (!$ehMeuPerfil): ?>
               <a href="../backend/seguir_usuario.php?id=<?php echo $usuario["id"]; ?>" class="perfil-btn <?php echo $jaSegue ? 'secondary' : 'primary'; ?>">
@@ -534,17 +561,26 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
             <strong>Membro desde:</strong> <?php echo date("d/m/Y", strtotime($usuario["data_cadastro"])); ?>
           </div>
         </div>
-
         <?php if ($ehMeuPerfil): ?>
-          <form action="../backend/atualizar_foto_perfil.php" method="POST" enctype="multipart/form-data" class="perfil-upload-box">
+          <form action="../backend/atualizar_foto_perfil.php" method="POST" enctype="multipart/form-data" class="perfil-upload-box" id="uploadFotoForm">
+            <?php
+            require_once "../backend/csrf.php";
+            ?>
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
+            
             <div class="custom-file-wrapper">
               <input type="file" name="foto_perfil" id="foto_perfil" class="custom-file-input" accept="image/*" required>
               <label for="foto_perfil" class="custom-file-label">Escolher nova foto</label>
               <span class="file-name" id="file-name-foto">Nenhum arquivo escolhido</span>
             </div>
 
-            <button type="submit" class="perfil-btn primary">Atualizar foto</button>
+            <button type="submit" class="perfil-btn primary" id="uploadFotoBtn">Atualizar foto</button>
           </form>
+        <?php endif; ?>
+        <?php if ($isAdmin): ?>
+          <div style="margin-top:12px;">
+            <a href="admin_users.php" class="perfil-btn secondary">Gerenciar usuários</a>
+          </div>
         <?php endif; ?>
       </div>
     </div>
@@ -603,16 +639,48 @@ $ehMeuPerfil = ($usuario_logado_id == $usuario_id);
 <script>
   const inputFoto = document.getElementById("foto_perfil");
   const fileNameFoto = document.getElementById("file-name-foto");
+  const uploadFotoBtn = document.getElementById("uploadFotoBtn");
+  const uploadFotoForm = document.getElementById("uploadFotoForm");
+  const maxSize = 5 * 1024 * 1024; // 5MB
 
   if (inputFoto && fileNameFoto) {
     inputFoto.addEventListener("change", function () {
-      fileNameFoto.textContent = this.files && this.files[0]
-        ? this.files[0].name
-        : "Nenhum arquivo escolhido";
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        fileNameFoto.textContent = file.name;
+
+        // Validar tamanho
+        if (file.size > maxSize) {
+          alert('Arquivo muito grande! Máximo 5MB.');
+          this.value = '';
+          fileNameFoto.textContent = 'Nenhum arquivo escolhido';
+          return;
+        }
+
+        // Validar tipo
+        if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type)) {
+          alert('Formato inválido! Use JPG, PNG, WebP ou GIF.');
+          this.value = '';
+          fileNameFoto.textContent = 'Nenhum arquivo escolhido';
+          return;
+        }
+      } else {
+        fileNameFoto.textContent = "Nenhum arquivo escolhido";
+      }
+    });
+  }
+
+  // Loading state ao submeter
+  if (uploadFotoForm && uploadFotoBtn) {
+    uploadFotoForm.addEventListener('submit', function() {
+      uploadFotoBtn.disabled = true;
+      uploadFotoBtn.textContent = '⏳ Atualizando...';
+      uploadFotoBtn.style.opacity = '0.6';
     });
   }
 </script>
-
+<link rel="stylesheet" href="../a11y.css">
+<script src="../a11y.js"></script>
 <script src="script.js?v=3"></script>
 </body>
 </html>

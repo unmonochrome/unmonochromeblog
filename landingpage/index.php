@@ -35,6 +35,7 @@ session_start();
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Pular para o conteúdo</a>
 
   <header class="navbar">
     <a href="#inicio" class="logo">
@@ -83,7 +84,7 @@ session_start();
     </div>
   </header>
 
-  <main>
+  <main id="main-content" role="main">
     <section class="hero reveal" id="inicio">
       <div class="hero-text">
         <p class="tag">Jogo autoral • acessibilidade • identidade visual • daltonismo</p>
@@ -270,7 +271,7 @@ session_start();
             <img src="img/processo-4.png" alt="Giorno Giovanna de Jojo Bizarre Adventure">
             <img src="img/processo-5.png" alt="Encarte do álbum de Supla">
             <img src="img/processo-6.png" alt="Menu do jogo Persona 3 Reload">
-            <img src="img/processo-7-novo.png" alt="Fotografia de Gal Costa">
+            <img src="img/processo-7-novo.png" alt="Frame do jogo Celeste">
           </div>
           <h3>Referências</h3>
           <p>Algumas das milhares de referências utilizadas para a criação da identidade visual do projeto, sejam elas de artistas, obras literárias, obras audiovisuais e tendências culturais.</p>
@@ -357,6 +358,8 @@ session_start();
   </footer>
 
 
+  <link rel="stylesheet" href="../a11y.css">
+  <script src="../a11y.js"></script>
   <script src="script.js?v=3"></script>
 </body>
 </html>
