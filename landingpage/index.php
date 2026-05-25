@@ -223,7 +223,7 @@ require_once "includes/header.php";
         <h3>Apoie a gente!</h3>
         <p class="role">Instagram do projeto</p>
         <p>Siga nossa página</p>
-        <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" class="team-instagram">
+        <a href="https://instagram.com/unmonochrome" target="_blank" rel="noopener noreferrer" class="team-instagram">
           <i class="fa-brands fa-instagram"></i> @unmonochrome
         </a>
       </article>

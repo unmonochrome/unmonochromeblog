@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Modal de imagem
+  // Modal de imagem - RESTAURADO
   const createImageModal = () => {
     if (document.getElementById("image-modal-overlay")) return;
 
@@ -84,16 +84,27 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(overlay);
   };
 
-  const openImageModal = (image) => {
+  const openImageModal = (imageOrSrc, altText) => {
     createImageModal();
 
     const overlay = document.getElementById("image-modal-overlay");
     const modalImg = overlay.querySelector(".image-modal-img");
     const caption = overlay.querySelector(".image-modal-caption");
 
-    modalImg.src = image.src;
-    modalImg.alt = image.alt || "Imagem ampliada";
-    caption.textContent = image.alt || "Clique para fechar";
+    let src, alt;
+    if (typeof imageOrSrc === "string") {
+      src = imageOrSrc;
+      alt = altText || "";
+    } else if (imageOrSrc && imageOrSrc.src) {
+      src = imageOrSrc.src;
+      alt = imageOrSrc.alt || "";
+    } else {
+      return;
+    }
+
+    modalImg.src = src;
+    modalImg.alt = alt || "Imagem ampliada";
+    caption.textContent = alt || "";
 
     overlay.classList.add("visible");
     document.body.classList.add("image-modal-open");
@@ -105,6 +116,10 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.classList.remove("visible");
     document.body.classList.remove("image-modal-open");
   };
+
+  // Tornar global para onclick="openImageModal(...)"
+  window.openImageModal = openImageModal;
+  window.closeImageModal = closeImageModal;
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -119,10 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
       img.closest("footer") ||
       img.closest(".custom-file-wrapper") ||
       img.closest(".nav-actions") ||
-      img.closest("#inicio") ||
-      img.closest("#daltonismo") ||
-      img.closest("#sobre") ||
-      img.classList.contains("perfil-avatar-img")
+      img.classList.contains("perfil-avatar-img") ||
+      img.closest(".hero-image")
     );
   };
 
@@ -130,6 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isImageExcluded(img)) return;
     if (img.clientWidth < 80 && img.clientHeight < 80) return;
     img.classList.add("zoomable-image");
+    img.style.cursor = "zoom-in";
   };
 
   const allImages = document.querySelectorAll("img");
@@ -139,6 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const target = event.target;
     if (target.tagName !== "IMG") return;
     if (!target.classList.contains("zoomable-image")) return;
+    if (target.closest("a")) return;
     event.preventDefault();
     openImageModal(target);
   });
